@@ -1,19 +1,21 @@
+import heapq
+
 class MedianFinder:
 
     def __init__(self):
-        self.nums = []
-        self.length = 0
+        self.heaps = [], []
 
     def addNum(self, num: int) -> None:
-        self.nums.append(num)
-        self.length += 1
-        self.nums.sort()
+        small, large = self.heaps
+        heapq.heappush(small, -heapq.heappushpop(large, num))
+        if len(large) < len(small):
+            heapq.heappush(large, -heapq.heappop(small))
 
     def findMedian(self) -> float:
-        if self.length % 2 == 0:
-            return (self.nums[self.length // 2] + self.nums[self.length // 2 - 1]) / 2
-        else:
-            return self.nums[self.length // 2]
+        small, large = self.heaps
+        if len(large) > len(small):
+            return float(large[0])
+        return (large[0] - small[0]) / 2.0
 
 # Time Complexity: O(nlogn)
 # Space Complexity: O(n)
